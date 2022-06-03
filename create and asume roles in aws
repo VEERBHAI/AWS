@@ -1,0 +1,82 @@
+163277334510 a/c id 
+pass:%7Drkuoccy
+#1 Create the Correct S3 Restricted Polices and Roles
+    Create The S3RestrictedPolicy
+        1. Open IAM > Click Polices
+        2. Create Policy >Choose Service and select S3
+        3. In action select All s3 actions.
+        4. In Resource select Any , Any resource in this account other than Bucket.
+        5. Nevigate to s3 in new tab
+        6. Under buckets select a bucket name.
+        7. Back to IAM and under Resource add ARN paste bucket name and add.
+        8. Next and review and name S3RestrictedPolicy.
+        9. Cerate policy.
+
+    Create S3RestrictedRole
+        1. IAM> Roles>create Role.
+        2. Select AWS account.
+        3. copy account number for future use.
+        4. Next> select S3 and select S3RestrictedPolicy.
+        5. Next> name S3RestrictedRole>CreateRole.
+
+    Revoke the S3 Administrator Policy the the dev1 user
+        AWS now auto logs out when logging in as another user (even if in a new Incognito/Private Window). As a work around, you can right-click the lab's blue "Open Link in Incognito/Private Window` button and copy the link into a different browser. You'll then be able to be logged into the other account using the lab provided credentials.
+Use the following credentials to log in:
+Account ID: The same account ID you previously copied
+User: dev1
+Password: 3Kk6!AY36^5h1rolJYb@C
+Navigate to S3 to see what this user has access to.
+Select one of the customerdata buckets and open it in a new tab. You should see that there are no objects, but you do have access to it.
+Back in S3, select one of the appconfig buckets, and open it in a new tab. You should see the same access as the customerdata bucket.
+Go back to the original IAM browser window that you had open.
+From the left-side menu, select User groups.
+Select the developergroup.
+Select Permissions.
+Select the AmazonS3FullAccess policy, and click Remove.
+Click Delete.
+Go back to the other incognito windows for the dev1 user.
+Refresh both windows for the customerdata and appconfig buckets. Note that you will now see an error indicating the user has insufficient permissions to list objects.
+Attach the S3RestrictedPolicy to the dev1 User
+Go back to the original IAM browser window.
+On the left-side menu, select Users.
+Select the dev1 user.
+Under Permissions, click Add permissions.
+Select Attach existing policies directly.
+In the search bar, type "S3" and select S3RestrictedPolicy.
+Click Next: Review.
+Click Add permissions.
+Click the arrow next to the policy, and select {} JSON to display and review the policy's contents.
+To verify the configuration, return to the dev1 browser and attempt to access the appconfig and customerdata buckets. You should now have access to appconfig buckets, while customerdata buckets are still denied.
+Configure IAM So the dev3 User Can Assume the Role
+Create the AssumeS3Policy IAM Policy
+Open a new incognito browser window using the same account ID as before. Log in as the dev3 user using the following credentials:
+User: dev3
+Password: 3Kk6!AY36^5h1rolJYb@C
+Navigate to S3. Note that dev3and verify the user's current access.
+Go back to the original IAM browser window.
+From the left-side menu, select Policies.
+Click Create policy.
+In Service, click Choose a service.
+Type and select STS.
+In Actions under Access level, click the arrow next to Write to expand its options, and select AssumeRole.
+In Resources under role, click Add ARN.
+In the Add ARN(s) pop-up window, set Role name with path to "S3RestrictedRole" and click Add.
+Click Next: Tags.
+Click Next: Review.
+For Name, enter "AssumeS3Policy", and click Create policy.
+Attach the AssumeS3Policy to the dev3 User
+Select the new policy.
+Select the Policy usage tab, and click Attach.
+Select dev3, and click Attach policy.
+Assume the S3RestrictedRole as the dev3 User
+Go back to the other browser window where you are logged in as dev3 in S3.
+Notice that the dev3 user still doesn't have bucket access because the role has not yet been assumed.
+To assume the role, click the user dropdown on the top menu, and copy your account ID in your clipboard.
+Click Switch Roles.
+In the new window, click Switch Role.
+Set the following values:
+Account: The account ID you just copied
+Role: S3RestrictedRole
+Display Name: S3RestrictedRole
+Click Switch Role.
+To verify the role has been assumed, attempt to access the appconfig and customer data buckets. You should now have access to appconfig buckets, while customer data buckets are still denied.
